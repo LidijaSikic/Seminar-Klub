@@ -20,7 +20,7 @@ RezultatiSet::RezultatiSet(CDatabase* pdb)
 	m_Rezultat = L"";
 	m_nFields = 5;
 	m_nDefaultType = dynaset;
-} // komentar
+} // komentar br 2
 
 CString RezultatiSet::GetDefaultConnect()
 {
