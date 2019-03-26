@@ -1,0 +1,1 @@
+Upute: u Control Panel-u dodajte ODBC data source (System DSN) koji pokazuje na Baza.accdb. Koristite "Data Sources (ODBC)" tool iz Control Panel\Administrative Tools. Na 64-bitnim Windowsima koristite 32-bitnu verziju (c:\Windows\SysWOW64\odbcad32.exe). DSN name koji odgovara projektu je: Baza.
