@@ -92,7 +92,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_TEL,33,128,59,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_ADRESA,122,128,103,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_MAIL,251,128,95,12,ES_AUTOHSCROLL
-    LTEXT           "Ime i prezime",IDC_STATIC_IME,32,60,90,8
+    LTEXT           "Prezime i ime",IDC_STATIC_IME,32,60,90,8
     LTEXT           "Spol",IDC_STATIC,136,60,14,8
     LTEXT           "Datum roðenja",IDC_STATIC,188,60,48,8
     LTEXT           "Aktivnost",IDC_STATIC,265,60,31,8
@@ -140,21 +140,21 @@ BEGIN
     PUSHBUTTON      "Natjecanja",IDC_BTN_NATJECANJAx,222,152,40,26,0,WS_EX_DLGMODALFRAME
 END
 
-IDD_DIALOG_PRIKAZ_CLANOVA DIALOGEX 0, 0, 431, 201
+IDD_DIALOG_PRIKAZ_CLANOVA DIALOGEX 0, 0, 450, 201
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Klub - Prikaz èlanova"
 FONT 11, "Arial", 700, 0, 0xEE
 BEGIN
-    CONTROL         "",IDC_LIST_CLANOVI,"SysListView32",LVS_REPORT | LVS_SORTASCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,42,417,106
+    CONTROL         "",IDC_LIST_CLANOVI,"SysListView32",LVS_REPORT | LVS_SORTASCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,42,436,106
     CONTROL         "Prikaži aktivne",IDC_RD_AKTIVNI,"Button",BS_AUTORADIOBUTTON | WS_GROUP,44,20,63,10
     CONTROL         "Prikaži neaktivne / ispisane",IDC_RD_NEAKTIVNI,"Button",BS_AUTORADIOBUTTON | BS_MULTILINE,124,17,71,15
     CONTROL         "Prikaži sve",IDC_RD_SVI,"Button",BS_AUTORADIOBUTTON,207,20,51,10
     PUSHBUTTON      "Prikaži",IDC_BTN_PRIKAZI,285,14,58,21,0,WS_EX_DLGMODALFRAME
-    PUSHBUTTON      "Ispiši prikaz",IDC_BTN_ISPISI_PRIKAZ,50,160,41,24,BS_MULTILINE,WS_EX_DLGMODALFRAME
-    PUSHBUTTON      "Zatvori aplikaciju",IDC_BTN_ZATVORI_APLIKACIJU,317,160,41,24,BS_MULTILINE,WS_EX_DLGMODALFRAME
-    PUSHBUTTON      "Poèetna",IDC_BTN_POCETNA4,118,160,41,24,0,WS_EX_DLGMODALFRAME
-    PUSHBUTTON      "Èlanarine",IDC_BTN_CLANARINE4,185,160,41,24,0,WS_EX_DLGMODALFRAME
-    PUSHBUTTON      "Natjecanja",IDC_BTN_NATJECANJA4,251,160,41,24,0,WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "Ispiši prikaz",IDC_BTN_ISPISI_PRIKAZ,70,160,41,24,BS_MULTILINE,WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "Zatvori aplikaciju",IDC_BTN_ZATVORI_APLIKACIJU,337,160,41,24,BS_MULTILINE,WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "Poèetna",IDC_BTN_POCETNA4,138,160,41,24,0,WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "Èlanarine",IDC_BTN_CLANARINE4,205,160,41,24,0,WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "Natjecanja",IDC_BTN_NATJECANJA4,271,160,41,24,0,WS_EX_DLGMODALFRAME
     COMBOBOX        IDC_COMBO1,0,187,97,30,CBS_DROPDOWN | CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
 END
 
@@ -194,7 +194,7 @@ BEGIN
     CONTROL         "Upis natjecanja",IDC_RD_UNOS_NATJECANJA,"Button",BS_AUTORADIOBUTTON | WS_GROUP,93,14,64,10
     CONTROL         "Promjena unosa",IDC_RD_PROMJENA_UNOSA,"Button",BS_AUTORADIOBUTTON,164,14,64,10
     EDITTEXT        IDC_EDIT_NAZIV_NATJECANJA,43,36,119,12,ES_AUTOHSCROLL
-    COMBOBOX        IDC_COMBO_LISTA_NATJECANJA,43,56,178,12,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_LISTA_NATJECANJA,43,61,178,12,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_EDIT_KOEFICIJENT,268,36,40,12,ES_AUTOHSCROLL
     CONTROL         "",IDC_DAT_ODRZAVANJA,"SysDateTimePick32",DTS_RIGHTALIGN | WS_TABSTOP,189,36,54,11
     LTEXT           "Naziv natjecanja",IDC_STATIC,43,26,61,8
@@ -230,7 +230,7 @@ END
 
 IDD_DIALOG_PRIKAZ_NATJECANJA DIALOGEX 0, 0, 399, 239
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Klub - Prikaz natjecanja"
+CAPTION "Klub - Prikaz natjecanja i rezultata"
 FONT 11, "Arial", 700, 0, 0xEE
 BEGIN
     CONTROL         "Za natjecatelja",IDC_RD_NATJECATELJ,"Button",BS_AUTORADIOBUTTON | WS_GROUP,15,16,61,10
@@ -286,7 +286,7 @@ BEGIN
     IDD_DIALOG_PRIKAZ_CLANOVA, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 424
+        RIGHTMARGIN, 443
         TOPMARGIN, 7
         BOTTOMMARGIN, 194
     END
@@ -420,6 +420,125 @@ END
 STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "Klub - poèetna\n\nKlub\n\n\nKlub.Document\nKlub.Document"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_IME          "Ime"
+    IDS_STRING_DAT_UPLATE   "Datum uplate"
+    IDS_STRING_IZNOS        "Iznos"
+    IDS_STRING_SVRHA        "Svrha"
+    IDS_STRING_DVOTOCKA     ":   "
+    IDS_STRING_ZAREZ        ","
+    IDS_STRING_ZAREZ_2      ",  "
+    IDS_STRING_TOCKA        "."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_PREZIME_IME  "Prezime i ime"
+    IDS_STRING_UNOS_CLANA_USPIO "Novi èlan je uspješno unesen u bazu"
+    IDS_STRING_UNOS_CLANA_NEUSPIO "Unos novog èlana nije uspio"
+    IDS_STRING_IZABERI_IME  "Izaberi ime za promjenu"
+    IDS_STRING_NIJE_UNESENO_IME "Nije uneseno ime èlana"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_IZBOR_UPLATITELJA "Izaberite uplatitelja"
+    IDS_STRING_UPLATITELJ   "Uplatitelj"
+    IDS_STRING_UPLATA_UNESENA "Nova uplata je uspješno unesena u bazu"
+    IDS_STRING_UPLATA_NIJE_UNESENA "Unos nove uplate nije uspio"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_NIJE_UNESEN_NAZIV "Nije unesen naziv natjecanja"
+    IDS_STRING_UNOS_NATJECANJA_USPIO 
+                            "Novo natjecanje je uspješno uneseno u bazu"
+    IDS_STRING_UNOS_NATJECANJA_NIJE_USPIO "Unos novog natjecanja nije uspio"
+    IDS_STRING_U_BAZI_NEMA_NATJECANJA "U bazi nema niti jedno natjecanje"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_U_BAZI_NEMA_CLANOVA "U bazi nema niti jedan èlan"
+    IDS_STRING_UNOS_REZULTATA_USPIO "Novi rezultat je uspješno unesen u bazu"
+    IDS_STRING_UNOS_REZULTATA_NIJE_USPIO "Unos novog rezultata nije uspio"
+    IDS_STRING_INF          "inf"
+    IDS_STRING_NAN          "nan"
+    IDS_STRING_KRIVI_KOEFICIJENT "Krivo unesen koeficijent"
+    IDS_STRING_KROZ_RAZMAK  "  /  "
+    IDS_STRING_POTREBNO_ZA_UNOS_PROMJENA 
+                            "Potrebno je izabrati i natjecanje i natjecatelja"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_GRESKA       "Greška"
+    IDS_STRING_OBAVIJEST    "Obavijest"
+    IDS_STRING_KRIVI_UNOS_DATUM "Krivi unos! Datum je veæi od današnjeg"
+    IDS_STRING_PROMJENE_UNESENE "Promjene su uspješno unesene"
+    IDS_STRING_PROMJENE_NISU_UNESENE "Promjene nisu uspješno unesene"
+    IDS_STRING_BAZA_BEZ_PODATAKA "U bazi nema podataka"
+    IDS_STRING_NEMA_PODATAKA_ZA_ISPIS "Nema podataka za ispis"
+    IDS_STRING_KARATE_KLUB  "KARATE  KLUB  ""RONIN"""
+    IDS_STRING_NA_DAN       "na dan:   "
+    IDS_STRING_STR          " str.  "
+    IDS_STRING_KROZ         "/"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_AKTIVNI_CLANOVI "Aktivni èlanovi kluba "
+    IDS_STRING_NEAKTIVNI_CLANOVI "Neaktivni èlanovi kluba "
+    IDS_STRING_POPIS_CLANOVA "Popis èlanova kluba   "
+    IDS_STRING_SPOL         "Spol"
+    IDS_STRING_DATUM_RODENJA "Datum roðenja"
+    IDS_STRING_TELEFON      "Telefon"
+    IDS_STRING_ADRESA       "Adresa"
+    IDS_STRING_MAIL         "Mail"
+    IDS_STRING_AKTIVNOST    "Aktivnost"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_CLAN         "Èlan  "
+    IDS_STRING_NEMA_UPLATE  "nema zabilježenih uplata"
+    IDS_STRING_RAZDOBLJE_BEZ_UPLATA 
+                            "U izabranom razdoblju nema zabilježenih uplata"
+    IDS_STRING_UPLATE_DO_M  "       uplate do dana:  "
+    IDS_STRING_UPLATE_DO_V  "Uplate do dana:   "
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_UPLATE_U_RAZDOBLJU_M "       uplate u razdoblju:  "
+    IDS_STRING_UPLATE_U_RAZDOBLJU_V "Uplate u razdoblju:      "
+    IDS_STRING_MINUS        "  -  "
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_ZAREZ_RAZMAK_1 " ,     "
+    IDS_STRING_ZAREZ_RAZMAK_2 " , "
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRING_DATUM_NATJECANJA "Datum natjecanja"
+    IDS_STRING_NAZIV_NATJECANJA "Naziv natjecanja"
+    IDS_STRING_KATEGORIJA   "Kategorija"
+    IDS_STRING_REZULTAT     "Rezultat"
+    IDS_STRING_NATJECATELJ  "Natjecatelj"
+    IDS_STRING_CLAN_NEMA_REZULTATA " nema zabilježenih rezultata"
+    IDS_STRING_RAZDOBLJE_BEZ_NATJECANJA 
+                            "U zadanom razdoblju nije bilo natjecanja"
+    IDS_STRING_ZA_NATJECANJE "Za natjecanje "
+    IDS_STRING_NEMA_UPISANIH_REZULTATA " nema upisanih rezultata "
+    IDS_STRING_REZULTATI    "          Rezultati  -  "
+    IDS_STRING_REZULTATI_U_RAZDOBLJU "Rezultati u razdoblju  "
+    IDS_STRING_REZULTATI_NA_NATJECANJU "Rezultati na natjecanju:  "
 END
 
 #endif    // Croatian (Croatia) resources

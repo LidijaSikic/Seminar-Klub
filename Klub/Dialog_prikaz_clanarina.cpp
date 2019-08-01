@@ -80,9 +80,13 @@ BOOL Dialog_prikaz_clanarina::OnInitDialog()
 	if (!RClanovi->IsOpen())
 		RClanovi->Open();
 
+	CString s, s1;
+
 	if (RClanovi->IsBOF() && RClanovi->IsEOF())
 	{
-		MessageBox(_T("U bazi nema podataka"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);		
+		s.LoadString(IDS_STRING_BAZA_BEZ_PODATAKA);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);		
 	}
 	else
 	{
@@ -103,15 +107,21 @@ BOOL Dialog_prikaz_clanarina::OnInitDialog()
 
 void Dialog_prikaz_clanarina::popuni_naslove()
 {
-	m_Lista.InsertColumn(0, _T("Ime"), LVCFMT_LEFT, 180);         
-	m_Lista.InsertColumn(1, _T("Datum uplate"), LVCFMT_CENTER, 120);
-	m_Lista.InsertColumn(2, _T("Iznos"), LVCFMT_CENTER, 80);
-	m_Lista.InsertColumn(3, _T("Svrha"), LVCFMT_LEFT, 200);
+	CString s;
+	s.LoadString(IDS_STRING_IME);
+	m_Lista.InsertColumn(0, s, LVCFMT_LEFT, 180); 
+	s.LoadString(IDS_STRING_DAT_UPLATE);
+	m_Lista.InsertColumn(1, s, LVCFMT_CENTER, 120);
+	s.LoadString(IDS_STRING_IZNOS);
+	m_Lista.InsertColumn(2, s, LVCFMT_CENTER, 80);
+	s.LoadString(IDS_STRING_SVRHA);
+	m_Lista.InsertColumn(3, s, LVCFMT_LEFT, 200);
 }
 
 
 void Dialog_prikaz_clanarina::OnBnClickedBtnPrikazi()
 {
+	CString s, s1, s2;
 	m_Lista.DeleteAllItems();
 	while (m_Lista.DeleteColumn(0));
 	
@@ -126,10 +136,14 @@ void Dialog_prikaz_clanarina::OnBnClickedBtnPrikazi()
 			m_combo.GetLBText(nSel, ime);
 		}
 
+		CString s;
 		m_Lista.InsertColumn(0, ime, LVCFMT_LEFT, 180);
-		m_Lista.InsertColumn(1, _T("Datum uplate"), LVCFMT_CENTER, 120);
-		m_Lista.InsertColumn(2, _T("Iznos"), LVCFMT_CENTER, 80);
-		m_Lista.InsertColumn(3, _T("Svrha"), LVCFMT_LEFT, 200);
+		s.LoadString(IDS_STRING_DAT_UPLATE);
+		m_Lista.InsertColumn(1, s, LVCFMT_CENTER, 120);
+		s.LoadString(IDS_STRING_IZNOS);
+		m_Lista.InsertColumn(2, s, LVCFMT_CENTER, 80);
+		s.LoadString(IDS_STRING_SVRHA);
+		m_Lista.InsertColumn(3, s, LVCFMT_LEFT, 200);
 
 		CString strIDclana;
 		strIDclana.Format(_T("%ld"), NadiIDclana());
@@ -153,9 +167,13 @@ void Dialog_prikaz_clanarina::OnBnClickedBtnPrikazi()
 		if (!RClanarine->IsOpen())
 			RClanarine->Open();
 
+		
 		if (RClanarine->IsBOF() && RClanarine->IsEOF())
 		{
-			MessageBox(_T("Èlan ") + ime + _T(" nema zabilježenih uplata"), _T("Obavijest"), MB_ICONINFORMATION | MB_OK);
+			s.LoadString(IDS_STRING_CLAN);
+			s1.LoadString(IDS_STRING_NEMA_UPLATE);
+			s2.LoadString(IDS_STRING_OBAVIJEST);
+			MessageBox(s + ime + s1, s2, MB_ICONINFORMATION | MB_OK);
 		}
 		else
 		{
@@ -180,10 +198,14 @@ void Dialog_prikaz_clanarina::OnBnClickedBtnPrikazi()
 	}
 	else if (m_rd_klub.GetCheck() == 1)
 	{
-		m_Lista.InsertColumn(0, _T("Ime"), LVCFMT_LEFT, 180);
-		m_Lista.InsertColumn(1, _T("Datum uplate"), LVCFMT_CENTER, 120);
-		m_Lista.InsertColumn(2, _T("Iznos"), LVCFMT_CENTER, 80);
-		m_Lista.InsertColumn(3, _T("Svrha"), LVCFMT_LEFT, 200);
+		s.LoadString(IDS_STRING_IME);
+		m_Lista.InsertColumn(0, s, LVCFMT_LEFT, 180);
+		s.LoadString(IDS_STRING_DAT_UPLATE);
+		m_Lista.InsertColumn(1, s, LVCFMT_CENTER, 120);
+		s.LoadString(IDS_STRING_IZNOS);
+		m_Lista.InsertColumn(2, s, LVCFMT_CENTER, 80);
+		s.LoadString(IDS_STRING_SVRHA);
+		m_Lista.InsertColumn(3, s, LVCFMT_LEFT, 200);
 
 		if (m_rd_sve_uplate.GetCheck() == 1)
 		{
@@ -205,8 +227,10 @@ void Dialog_prikaz_clanarina::OnBnClickedBtnPrikazi()
 			RClanarine->Open();
 
 		if (RClanarine->IsBOF() && RClanarine->IsEOF())
-		{			
-				MessageBox(_T("U izabranom razdoblju nema zabilježenih uplata"), _T("Obavijest"), MB_ICONINFORMATION | MB_OK);
+		{		
+			s.LoadString(IDS_STRING_RAZDOBLJE_BEZ_UPLATA);
+			s1.LoadString(IDS_STRING_OBAVIJEST);
+			MessageBox(s, s1, MB_ICONINFORMATION | MB_OK);
 		}
 		else
 		{
@@ -265,10 +289,13 @@ void Dialog_prikaz_clanarina::NadiIme(long IDclana)
 
 void Dialog_prikaz_clanarina::OnBnClickedBtnIspisiPrikaz()
 {
+	CString s, s1;
 	int z = m_Lista.GetItemCount();
 	if (z == 0)
 	{
-		MessageBox(_T("Nema podataka za ispis"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
+		s.LoadString(IDS_STRING_NEMA_PODATAKA_ZA_ISPIS);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 		return;
 	}
 	else
@@ -324,15 +351,15 @@ void Dialog_prikaz_clanarina::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 	ASSERT(m_pFntHeader1 == 0);
 	ASSERT(m_pFntHeader2 == 0);
 
-	pDC->SetMapMode(MM_TWIPS);
 	// Create the bold font used for the fields. 	
 	m_pFntData = new CFont;
 	ASSERT(m_pFntData);
-	m_pFntData->CreateFont(280,
+	int fntDataSize = 12;
+	m_pFntData->CreateFont(-fntDataSize * pDC->GetDeviceCaps(LOGPIXELSY) / 72,
 		0,
 		0,
 		0,
-		FW_NORMAL, 
+		FW_NORMAL,
 		FALSE,
 		FALSE,
 		0,
@@ -342,10 +369,11 @@ void Dialog_prikaz_clanarina::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 		DEFAULT_QUALITY,
 		DEFAULT_PITCH | FF_ROMAN,
 		_T("Arial"));
-	// Create the big font used for the Headline banner.
+
 	m_pFntHeader1 = new CFont;
 	ASSERT(m_pFntHeader1);
-	m_pFntHeader1->CreateFont(850,
+	int fntHeader1Size = 25;
+	m_pFntHeader1->CreateFont(-fntHeader1Size * pDC->GetDeviceCaps(LOGPIXELSY) / 72,
 		0,
 		0,
 		0,
@@ -359,11 +387,11 @@ void Dialog_prikaz_clanarina::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 		DEFAULT_QUALITY,
 		DEFAULT_PITCH | FF_ROMAN,
 		_T("Times Roman"));
-	// Create the bold font used for the Headline highlight.
-	// This is the text used under the headline banner
+
 	m_pFntHeader2 = new CFont;
 	ASSERT(m_pFntHeader2);
-	m_pFntHeader2->CreateFont(280,
+	int fntHeader2Size = 12;
+	m_pFntHeader2->CreateFont(-fntHeader2Size * pDC->GetDeviceCaps(LOGPIXELSY) / 72,
 		0,
 		0,
 		0,
@@ -378,53 +406,62 @@ void Dialog_prikaz_clanarina::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 		DEFAULT_PITCH | FF_ROMAN,
 		_T("Arial"));
 
-	INT brIt = m_Lista.GetItemCount();
-	FLOAT brStr;
-	if (brIt % 32 == 0)
-		brStr = brIt / 32;
-	else
-		brStr = brIt / 32 + 1;
+	int visina = pInfo->m_rectDraw.Height() - VisinaHeadera(pDC);
+	int brIt = m_Lista.GetItemCount();
+	int visinaReda = VisinaReda(pDC);
 
-	pInfo->SetMaxPage(brStr);
+	int brStr;
+	if (brIt % (visina / visinaReda) == 0)
+		brStr = brIt / (visina / visinaReda);
+	else
+		brStr = brIt / (visina / visinaReda) + 1;
+
+	pInfo->SetMaxPage(brStr);	
 }
 
 void Dialog_prikaz_clanarina::OnPrint(CDC *pDC, CPrintInfo* pInfo)
-{
-	CString s;
-	int sirina_p = pDC->GetDeviceCaps(HORZRES);
-	int visina_p = pDC->GetDeviceCaps(VERTRES);
-	CSize font = pDC->GetTextExtent(_T("A"));
-	int x1 = sirina_p / 6;
-	int y1 = -(font.cy * 8);//4;
-
-	CString text;
-
+{	
+	CPoint pt(0, 0);
+	
 	TEXTMETRIC tm;
 	PrintHeader(pDC, pInfo);
-
+	int visinaHeadera = VisinaHeadera(pDC);
 	CFont* pOldFont = pDC->SelectObject(m_pFntData);
 	pDC->GetTextMetrics(&tm);
 
-	int flag = pInfo->m_nCurPage;
+	CRect visinaStranice = pInfo->m_rectDraw;
+	
+	int stranica = pInfo->m_nCurPage;
+	int razmak = tm.tmHeight + tm.tmExternalLeading;
+	int visinaReda = 1.5*razmak + 2 * tm.tmHeight;
+	int visina = visinaStranice.Height() - visinaHeadera;
+
+	int brRedova = visina / visinaReda;
+
 	CString rb;
-	for (int red = 32 * (flag - 1); red < m_Lista.GetItemCount() && red <= 31 * flag; red++)
+
+	pt.y = visinaHeadera + razmak;
+	pt.x = 2 * tm.tmHeight;
+
+	
+	for (int red = brRedova * (stranica - 1); red < m_Lista.GetItemCount() && red <= (brRedova - 1) * stranica; red++)
 	{
 		if (m_rd_clan.GetCheck() == 1)
 		{
 			rb.Format(_T("%ld"), red + 1);
-			pDC->TextOut(x1, y1 -= 550, rb + _T("."));
-			pDC->TextOut(x1*1.5, y1, m_Lista.GetItemText(red, 1));
-			pDC->TextOut(x1*4.7, y1, m_Lista.GetItemText(red, 3));
-			pDC->TextOut(x1*8.4, y1, m_Lista.GetItemText(red, 2));
+			pDC->TextOut(pt.x, pt.y +=2*razmak , rb + _T("."));
+			pDC->TextOut(pt.x *2, pt.y, m_Lista.GetItemText(red, 1));
+			pDC->TextOut(pt.x *6, pt.y, m_Lista.GetItemText(red, 3));
+			pDC->TextOut(pt.x *12, pt.y, m_Lista.GetItemText(red, 2));
 		}
 		else if (m_rd_klub.GetCheck() == 1)
 		{
 			rb.Format(_T("%ld"), red + 1);
-			pDC->TextOut(x1, y1 -= 550, rb + _T("."));
-			pDC->TextOut(x1*1.5, y1, m_Lista.GetItemText(red, 0));
-			pDC->TextOut(x1*5.1, y1, m_Lista.GetItemText(red, 1));
-			pDC->TextOut(x1*7.4, y1, m_Lista.GetItemText(red, 3));
-			pDC->TextOut(x1*10.9, y1, m_Lista.GetItemText(red, 2));
+			pDC->TextOut(pt.x, pt.y += 2*razmak, rb + _T("."));
+			pDC->TextOut(pt.x *2, pt.y, m_Lista.GetItemText(red, 0));
+			pDC->TextOut(pt.x *7, pt.y, m_Lista.GetItemText(red, 1));
+			pDC->TextOut(pt.x *11, pt.y, m_Lista.GetItemText(red, 3));
+			pDC->TextOut(pt.x *17, pt.y, m_Lista.GetItemText(red, 2));
 		}		
 	}
 }
@@ -500,26 +537,32 @@ void Dialog_prikaz_clanarina::Print()
 
 void Dialog_prikaz_clanarina::PrintHeader(CDC* pDC, CPrintInfo *pInfo)
 {
+	CString s, s1;
 	ASSERT(pDC);
 	TEXTMETRIC tm;
 	CPoint pt(0, 0);
-	// Select the banner font, and print the headline.
+	
 	CFont* pOldFont = pDC->SelectObject(m_pFntHeader1);
 	ASSERT(pOldFont);
 	pDC->GetTextMetrics(&tm);
 	int cyText = tm.tmHeight*0.5 + tm.tmExternalLeading;
-	pt.y -= cyText;
-	pDC->TextOut(pt.x + 1070, pt.y, _T("KARATE  KLUB  \"RONIN\""));
+	pt.y += cyText;
+	pt.x = tm.tmHeight;
+
+	s.LoadString(IDS_STRING_KARATE_KLUB);
+	pDC->TextOut(pt.x *6 , pt.y, s);
 	
 	CPen* pOldPen = pDC->SelectObject(&m_penBlack);
 	ASSERT(pOldPen);
-	pt.y -= cyText * 2;
+	pt.x = 0;
+	pt.y += cyText * 2;
 	pDC->MoveTo(pt);
-	pDC->LineTo(12000, pt.y);
+	pDC->LineTo(pDC->GetDeviceCaps(HORZRES), pt.y);
 	
 	VERIFY(pDC->SelectObject(m_pFntHeader2));
 	
-	pt.y -= (cyText / 4);
+	pt.x = tm.tmHeight;
+	pt.y += (cyText / 3);
 
 	CString tekst, ime;
 	CTime dat = CTime::GetCurrentTime();
@@ -533,21 +576,29 @@ void Dialog_prikaz_clanarina::PrintHeader(CDC* pDC, CPrintInfo *pInfo)
 	m_combo.GetWindowTextW(ime);
 
 	if (m_rd_clan.GetState() == 1 && m_rd_sve_uplate.GetState() == 1)
-	{		
-		tekst = ime +  _T("       uplate do dana:  ") + datum;
+	{	
+		s.LoadString(IDS_STRING_UPLATE_DO_M);
+		tekst = ime +  s + datum;
+		
 	}		
 	else if (m_rd_clan.GetState() == 1 && m_rd_razdoblje.GetState() == 1)
 	{
-		tekst = ime + _T("       uplate u razdoblju:  ")+ datum1 +_T("  -  ") + datum2;
+		s.LoadString(IDS_STRING_UPLATE_U_RAZDOBLJU_M);
+		s1.LoadString(IDS_STRING_MINUS);
+		tekst = ime + s+ datum1 +s1 + datum2;
 	}	
 	else if (m_rd_klub.GetState() == 1 && m_rd_sve_uplate.GetState() == 1)
 	{
-		tekst = _T("Uplate do dana:  ")+ datum;
+		s.LoadString(IDS_STRING_UPLATE_DO_V);
+		tekst = s+ datum;
 	}
 		
 	else if (m_rd_klub.GetState() == 1 && m_rd_razdoblje.GetState() == 1)
 	{
-		tekst = _T("Uplate u razdoblju:  ") + datum1 + _T("  -  ") + datum2;;
+		s.LoadString(IDS_STRING_UPLATE_U_RAZDOBLJU_V);
+		s1.LoadString(IDS_STRING_MINUS);
+
+		tekst = s + datum1 + s1 + datum2;;
 	}
 		
 	UINT st = pInfo->m_nCurPage;
@@ -556,11 +607,43 @@ void Dialog_prikaz_clanarina::PrintHeader(CDC* pDC, CPrintInfo *pInfo)
 	str.Format(_T("%u"), st);
 	ukStr.Format(_T("%u"), uk);
 
-	pDC->TextOut(pt.x += 1600, pt.y, tekst);
-	pDC->TextOut(pt.x *5.5, pt.y, _T(" str.  ") + str + _T("/") + ukStr);
+	pDC->TextOut(pt.x *3, pt.y, tekst);
+	s.LoadString(IDS_STRING_STR);
+	s1.LoadString(IDS_STRING_KROZ);
+	pDC->TextOut(pt.x *16, pt.y, s + str + s1 + ukStr);
 	// Restore GDI objects.
 	pDC->SelectObject(pOldFont);
 	pDC->SelectObject(pOldPen);
 }
 
+int Dialog_prikaz_clanarina::VisinaHeadera(CDC* pDC)
+{
+	int y = 0;
+	ASSERT(pDC);
+	TEXTMETRIC tm;
 
+	CFont* pFont = pDC->SelectObject(m_pFntHeader1);
+
+	ASSERT(pFont);
+	pDC->GetTextMetrics(&tm);
+	int cyText = tm.tmHeight*0.5 + tm.tmExternalLeading;
+
+	y = cyText * 3;
+
+	VERIFY(pDC->SelectObject(m_pFntHeader2));
+
+	y += (cyText / 3);
+
+	return y;
+}
+
+int Dialog_prikaz_clanarina::VisinaReda(CDC* pDC)
+{
+	CFont* pFont = pDC->SelectObject(m_pFntData);
+	TEXTMETRIC tm;
+	pDC->GetTextMetrics(&tm);
+
+	int razmak = tm.tmHeight + tm.tmExternalLeading;
+	int visinaReda = 1.5*razmak + 2 * tm.tmHeight;
+	return visinaReda;
+}

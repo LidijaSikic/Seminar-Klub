@@ -70,10 +70,9 @@ BOOL DialogClanarine::OnInitDialog()
 	HICON hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
 	SetIcon(hIcon, FALSE);
 	
-	m_combo_iznos.SetCurSel(0);
-
+	m_combo_iznos.SetCurSel(0);	
 	m_dat_uplate.SetFormat(_T("dd.MM.yyyy"));
-	
+		
 	CString Ime;
 	
 	if (!RClanovi->IsOpen())
@@ -95,8 +94,10 @@ BOOL DialogClanarine::OnInitDialog()
 
 void DialogClanarine::OnBnClickedRdPromjenaClanarine()
 {
+	CString s;
 	m_combo_uplatitelj.SetCurSel(0);
-	m_static_uplatitelj.SetWindowTextW(_T("Izaberite uplatitelja"));
+	m_static_uplatitelj.SetWindowTextW(s);
+	s.LoadString(IDS_STRING_IZBOR_UPLATITELJA);
 	m_combo_lista_uplata.EnableWindow(TRUE);
 	m_static_lista_uplata.ShowWindow(TRUE);
 }
@@ -104,8 +105,10 @@ void DialogClanarine::OnBnClickedRdPromjenaClanarine()
 
 void DialogClanarine::OnBnClickedRdUnosUplate()
 {
+	CString s;
 	m_combo_uplatitelj.SetCurSel(0);
-	m_static_uplatitelj.SetWindowTextW(_T("Uplatitelj"));
+	m_static_uplatitelj.SetWindowTextW(s);
+	s.LoadString(IDS_STRING_UPLATITELJ);
 	Ocisti();
 	m_combo_lista_uplata.EnableWindow(FALSE);
 	m_static_lista_uplata.ShowWindow(FALSE);
@@ -114,15 +117,17 @@ void DialogClanarine::OnBnClickedRdUnosUplate()
 
 void DialogClanarine::OnCbnSelchangeComboUplatitelj()
 {
+	CString s,s1;
 	if (m_rd_promjena_clanarine.GetCheck() == 1)
 	{
 		Ocisti();
 	
 		CString strIDclana;
+		
 		strIDclana.Format(_T("%ld"), NadiIDclana());
 
 		CString strDateOd, strDateDo;
-
+	
 		RClanarine->m_strFilter = _T("IDclana = ") + strIDclana + _T("");
 		if(!RClanarine->IsOpen())
 		RClanarine->Open();
@@ -131,6 +136,7 @@ void DialogClanarine::OnCbnSelchangeComboUplatitelj()
 
 			CString strIDuplate;
 			long IDuplate = RClanarine->m_IDuplate;
+			
 			strIDuplate.Format(_T("%ld"), IDuplate);
 
 			CString svrhaUplate = RClanarine->m_SvrhaUplate;
@@ -140,9 +146,11 @@ void DialogClanarine::OnCbnSelchangeComboUplatitelj()
 
 			CString strDatum;
 			CTime datum = RClanarine->m_DatumUplate;
+			
 			strDatum = datum.Format(_T("%d.%m.%Y"));
 
 			CString podaci;
+
 			podaci = strIDuplate + _T(":  ") + svrhaUplate + _T("    ") + strDatum + _T("    ") + iznos + _T("");
 			m_combo_lista_uplata.AddString(podaci);
 
@@ -158,6 +166,7 @@ void DialogClanarine::OnCbnSelchangeComboUplatitelj()
 
 long DialogClanarine::NadiIDclana()
 {
+	CString s, s1;
 	CString ime;
 	long IDclana;
 	
@@ -166,6 +175,7 @@ long DialogClanarine::NadiIDclana()
 	{
 		m_combo_uplatitelj.GetLBText(nSel, ime);
 	}
+	
 	RClanovi->m_strFilter = _T("ImePrezime = '") + ime + _T("'");
 	if (!RClanovi->IsOpen())
 	RClanovi->Open();
@@ -178,16 +188,17 @@ long DialogClanarine::NadiIDclana()
 
 void DialogClanarine::OnCbnSelchangeComboListaUplata()
 {
+	CString s, s1;
 	CString podaci;
 	int nSel = m_combo_lista_uplata.GetCurSel();
 	if (nSel != LB_ERR)
 	{
 		m_combo_lista_uplata.GetLBText(nSel, podaci);		
 	}
-
+	
 	CString strIndex = podaci.Left(podaci.Find(_T(":")));
 	strIndex.Trim();
-
+	
 	RClanarine->m_strFilter = _T("IDuplate = ") + strIndex + _T("");
 	if (!RClanarine->IsOpen())
 	RClanarine->Open();
@@ -236,13 +247,17 @@ void DialogClanarine::Ocisti()
 
 void DialogClanarine::Spremi()
 {	
+	CString s, s1;
 	CTime datUplate,dat;
 	dat = dat.GetCurrentTime();
 	m_dat_uplate.GetTime(datUplate);
 
 	if (datUplate > dat)
 	{
-		MessageBox(_T("Krivi unos! Datum je veæi od današnjeg"), _T("Greška"), MB_ICONERROR | MB_OK);
+		s.LoadString(IDS_STRING_KRIVI_UNOS_DATUM);
+		s1.LoadString(IDS_STRING_GRESKA);
+
+		MessageBox(s, s1, MB_ICONERROR | MB_OK);
 		m_dat_uplate.SetFocus();
 		return ;
 	}
@@ -250,7 +265,8 @@ void DialogClanarine::Spremi()
 	{
 		CString ime;
 		long IDclana;
-		m_combo_uplatitelj.GetWindowText(ime);
+		m_combo_uplatitelj.GetWindowText(ime);		
+
 		RClanovi->m_strFilter = _T("[ImePrezime] = '") + ime + _T("'");
 		RClanovi->Open();
 		IDclana = RClanovi->m_IDclana;
@@ -278,11 +294,17 @@ void DialogClanarine::Spremi()
 		RClanarine->m_SvrhaUplate = svrha;
 
 		if (!RClanarine->Update())
-			MessageBox(_T("Unos nove uplate nije uspio"), _T("Greška"),
-				MB_ICONERROR | MB_OK);
+		{
+			s.LoadString(IDS_STRING_UPLATA_NIJE_UNESENA);
+			s1.LoadString(IDS_STRING_GRESKA);
+			MessageBox(s, s1, MB_ICONERROR | MB_OK);				
+		}
 		else
-			MessageBox(_T("Nova uplata je uspješno unesena u bazu"), _T("Obavijest"),
-				MB_OK);
+		{
+			s.LoadString(IDS_STRING_UPLATA_UNESENA);
+			s1.LoadString(IDS_STRING_OBAVIJEST);
+			MessageBox(s, s1, MB_OK);				
+		}
 	}
 	else if (m_rd_promjena_clanarine.GetCheck() == 1)
 	{
@@ -302,10 +324,14 @@ void DialogClanarine::Spremi()
 		RClanarine->m_SvrhaUplate = svrha;
 
 		if (!RClanarine->Update()) {
-			MessageBox(_T("Promjene nisu uspješno unesene"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
+			s.LoadString(IDS_STRING_PROMJENE_NISU_UNESENE);
+			s1.LoadString(IDS_STRING_GRESKA);
+			MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 		}
 		else {
-			MessageBox(_T("Promjene su uspješno unesene"), _T("Obavijest"), MB_OK);
+			s.LoadString(IDS_STRING_PROMJENE_UNESENE);
+			s1.LoadString(IDS_STRING_OBAVIJEST);
+			MessageBox(s, s1, MB_OK);
 		}
 	}
 	RClanarine->Requery();

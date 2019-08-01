@@ -93,5 +93,5 @@ public:
 	afx_msg void OnBnClickedBtnClanarine3();
 	CEdit m_edit_pom2;
 	afx_msg void OnEnChangeEditKoeficijent();
-	//afx_msg void OnEnChangeEditPom();
+	
 };

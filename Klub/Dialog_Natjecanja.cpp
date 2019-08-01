@@ -83,7 +83,7 @@ BEGIN_MESSAGE_MAP(Dialog_Natjecanja, CDialog)
 	ON_BN_CLICKED(IDC_BTN_CLANOVI3, &Dialog_Natjecanja::OnBnClickedBtnClanovi3)
 	ON_BN_CLICKED(IDC_BTN_CLANARINE3, &Dialog_Natjecanja::OnBnClickedBtnClanarine3)
 	ON_EN_CHANGE(IDC_EDIT_KOEFICIJENT, &Dialog_Natjecanja::OnEnChangeEditKoeficijent)
-	//ON_EN_CHANGE(IDC_EDIT_POM, &Dialog_Natjecanja::OnEnChangeEditPom)
+	
 END_MESSAGE_MAP()
 
 
@@ -96,10 +96,12 @@ BOOL Dialog_Natjecanja::OnInitDialog()
 
 	HICON hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
 	SetIcon(hIcon, FALSE);
-
+	
 	m_dat_odrzavanja.SetFormat(_T("dd.MM.yyyy"));
 	
-	m_combo_lista_natjecanja.ShowWindow(FALSE);
+	//m_combo_lista_natjecanja.ShowWindow(FALSE);
+	m_combo_lista_natjecanja.EnableWindow(FALSE);
+
 	m_rd_unos_rezultata.SetCheck(0);
 	m_rd_promjena_rezultata.SetCheck(0);
 	m_combo_rezultat.SetCurSel(0);
@@ -114,13 +116,14 @@ BOOL Dialog_Natjecanja::OnInitDialog()
 void Dialog_Natjecanja::OnBnClickedRdUnosNatjecanja()
 {
 	OcistiNatjecanja();
-	m_combo_lista_natjecanja.ShowWindow(FALSE);
+	//m_combo_lista_natjecanja.EnableWindow(FALSE);
 }
 
 void Dialog_Natjecanja::OnBnClickedRdPromjenaUnosa()
 {
+	CString s, s1;
 	OcistiNatjecanja();
-	m_combo_lista_natjecanja.ShowWindow(TRUE);
+	m_combo_lista_natjecanja.EnableWindow(TRUE);
 
 	CString natjecanje;
 	if (!RNatjecanja->IsOpen())
@@ -130,9 +133,11 @@ void Dialog_Natjecanja::OnBnClickedRdPromjenaUnosa()
 		CString naziv = RNatjecanja->m_NazivNatjecanja;
 
 		 CTime datum = RNatjecanja->m_DatumNatjecanja;
-		 CString strDatum = datum.Format("%d.%m.%Y");
+		 
+		 CString strDatum = datum.Format(_T("%d.%m.%Y"));
 
-		m_combo_lista_natjecanja.AddString(naziv + _T(",  ") + strDatum);
+		 s1.LoadString(IDS_STRING_ZAREZ_2);
+		m_combo_lista_natjecanja.AddString(naziv + s1 + strDatum);
 		RNatjecanja->MoveNext();
 	}	
 	RNatjecanja->Close();
@@ -141,28 +146,45 @@ void Dialog_Natjecanja::OnBnClickedRdPromjenaUnosa()
 
 void Dialog_Natjecanja::OnBnClickedBtnSpremiNatj()
 {
+	CString s, s1;
 	CString strkoef, text;
 	double koef;
 	m_edit_koeficijent.GetWindowTextW(strkoef);
 
-	if (strkoef.Find(_T(",")))
+	s.LoadString(IDS_STRING_ZAREZ);
+	if (strkoef.Find(s))
 	{
-		strkoef.Replace(_T(","), _T("."));
+		s1.LoadString(IDS_STRING_TOCKA);
+		strkoef.Replace(s, s1);
+		m_edit_koeficijent.SetWindowTextW(strkoef);
 	}
 	
-	m_edit_koeficijent.SetWindowTextW(strkoef);
+	if (strkoef.Find(s1) == -1)
+	{
 		
+		strkoef.Append(_T(".0"));
+		m_edit_koeficijent.SetWindowTextW(strkoef);
+	}
+	CString t, t1, t2;
+	//t.LoadString(IDS_STRING_TOCKA);
+	t1.LoadString(IDS_STRING_INF);
+	t2.LoadString(IDS_STRING_NAN);
 	m_edit_naziv_natjecanja.GetWindowTextW(text);
 	if (text.IsEmpty()) {
-		MessageBox(_T("Nije unesen naziv natjecanja"), _T("Greška"),
-			MB_ICONERROR | MB_OK);
+		s.LoadString(IDS_STRING_NIJE_UNESEN_NAZIV);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONERROR | MB_OK);
+			
 		m_edit_naziv_natjecanja.SetFocus();
 		return;
 	}
-	else if (strkoef.GetAt(2)==(_T('.'))  || (koef = _ttof(strkoef))==_T('inf') || (koef = _ttof(strkoef)) == _T('nan') || koef >= 10)
+	//strkoef.GetAt(2)==t  ||
+	else if ( (koef = _ttof(strkoef))==t1 || (koef = _ttof(strkoef)) == t2 || koef >= 10)
 	{
-		MessageBox(_T("Krivo unesen koeficijent"), _T("Greška"),
-			MB_ICONERROR | MB_OK);
+		s.LoadString(IDS_STRING_KRIVI_KOEFICIJENT);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONERROR | MB_OK);
+			
 		m_edit_koeficijent.SetFocus();
 		return;
 	}
@@ -188,6 +210,7 @@ void Dialog_Natjecanja::OnBnClickedBtnOdustaniNatj()
 	OcistiNatjecanja();
 	m_rd_unos_natjecanja.SetCheck(TRUE);
 	m_rd_promjena_unosa.SetCheck(FALSE);
+	m_combo_lista_natjecanja.EnableWindow(FALSE);
 
 	if (!RNatjecanja->IsOpen())
 		RNatjecanja->Open();
@@ -214,8 +237,9 @@ void Dialog_Natjecanja::OcistiNatjecanja()
 
 void Dialog_Natjecanja::SpremiNatjecanje()
 {
+	CString s, s1;
 	CString text;
-	int nNoviID = 0;
+	
 	m_edit_naziv_natjecanja.GetWindowTextW(text);
 	
 		long noviID=1;
@@ -243,12 +267,17 @@ void Dialog_Natjecanja::SpremiNatjecanje()
 		RNatjecanja->m_Koeficijent = koef;
 
 		if (!RNatjecanja->Update())
-			MessageBox(_T("Unos novog natjecanja nije uspio"), _T("Greška"),
-				MB_ICONERROR | MB_OK);
+		{
+			s.LoadString(IDS_STRING_UNOS_NATJECANJA_NIJE_USPIO);
+			s1.LoadString(IDS_STRING_GRESKA);
+			MessageBox(s, s1, MB_ICONERROR | MB_OK);				
+		}
 		else
-			MessageBox(_T("Novo natjecanje je uspješno uneseno u bazu"), _T("Obavijest"),
-				MB_OK);
-
+		{
+			s.LoadString(IDS_STRING_UNOS_NATJECANJA_USPIO);
+			s1.LoadString(IDS_STRING_OBAVIJEST);
+			MessageBox(s, s1, MB_OK);				
+		}
 		RNatjecanja->Requery();
 		RNatjecanja->Close();
 }
@@ -256,6 +285,7 @@ void Dialog_Natjecanja::SpremiNatjecanje()
 
 void Dialog_Natjecanja::PromijeniNatjecanje()
 {
+	CString s, s1;
 	CString text;
 	if(!RNatjecanja->IsOpen())
 	RNatjecanja->Open();
@@ -275,11 +305,17 @@ void Dialog_Natjecanja::PromijeniNatjecanje()
 	RNatjecanja->m_DatumNatjecanja = datum;
 	RNatjecanja->m_Koeficijent = koef;
 
-	if (!RNatjecanja->Update()) {
-		MessageBox(_T("Promjene nisu uspješno unesene"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
+	if (!RNatjecanja->Update()) 
+	{
+		s.LoadString(IDS_STRING_PROMJENE_NISU_UNESENE);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 	}
-	else {
-		MessageBox(_T("Promjene su uspješno unesene"), _T("Obavijest"), MB_OK);
+	else 
+	{
+		s.LoadString(IDS_STRING_PROMJENE_UNESENE);
+		s1.LoadString(IDS_STRING_OBAVIJEST);
+		MessageBox(s, s1, MB_OK);
 	}
 	RNatjecanja->Requery();
 	RNatjecanja->m_strFilter = _T("");
@@ -290,6 +326,7 @@ void Dialog_Natjecanja::PromijeniNatjecanje()
 
 void Dialog_Natjecanja::OnCbnSelchangeComboListaNatjecanja()
 {
+	CString s, s1;
 	CString naziv;
 
 	int nSel = m_combo_lista_natjecanja.GetCurSel();
@@ -297,10 +334,10 @@ void Dialog_Natjecanja::OnCbnSelchangeComboListaNatjecanja()
 	{
 		m_combo_lista_natjecanja.GetLBText(nSel, naziv);
 	}
-
+	
 	naziv.Delete(naziv.Find(_T(",")), 16);
 	m_edit_naziv_natjecanja.SetWindowTextW(naziv);
-
+	
 	RNatjecanja->m_strFilter = _T("[NazivNatjecanja] = '") + naziv + _T("'");
 	
 	if (!RNatjecanja->IsOpen())
@@ -359,25 +396,36 @@ void Dialog_Natjecanja::OnBnClickedRdPromjenaRezultata()
 
 void Dialog_Natjecanja::OnBnClickedBtnSpremiRez()
 {
-	if (m_rd_unos_rezultata.GetCheck() == 1)
+	CString s, s1;
+	if (m_combo_natjecanje_rez.GetCurSel() == -1 || m_combo_natjecatelj.GetCurSel() == -1)
 	{
-		SpremiRez();
-		OcistiRezultate();
+		s.LoadString(IDS_STRING_POTREBNO_ZA_UNOS_PROMJENA);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 	}
-	else if (m_rd_promjena_rezultata.GetCheck() == 1)
+	else
 	{
-		PromijeniRez();
-		OcistiRezultate();
-		m_combo_natjecatelj.EnableWindow(TRUE);
-		m_combo_natjecanje_rez.EnableWindow(TRUE);
-		m_rd_unos_rezultata.SetCheck(1);
-		m_rd_promjena_rezultata.SetCheck(0);
-		m_rd_promjena_unosa_rez_za_natjecanje.ShowWindow(FALSE);
-		m_rd_promjena_unosa_rez_za_natjecatelja.ShowWindow(FALSE);
-	}
+		if (m_rd_unos_rezultata.GetCheck() == 1)
+		{
+			SpremiRez();
+			OcistiRezultate();
+		}
+		else if (m_rd_promjena_rezultata.GetCheck() == 1)
+		{
+			PromijeniRez();
+			OcistiRezultate();
+			m_combo_natjecatelj.EnableWindow(TRUE);
+			m_combo_natjecanje_rez.EnableWindow(TRUE);
+			m_rd_unos_rezultata.SetCheck(1);
+			m_rd_promjena_rezultata.SetCheck(0);
+			m_rd_promjena_unosa_rez_za_natjecanje.ShowWindow(FALSE);
+			m_rd_promjena_unosa_rez_za_natjecatelja.ShowWindow(FALSE);
 
-	UcitajNatjecanje_rez();
-	UcitajNatjecatelje_rez();
+		}
+
+		UcitajNatjecanje_rez();
+		UcitajNatjecatelje_rez();
+	}
 }
 
 
@@ -433,6 +481,7 @@ void Dialog_Natjecanja::OnBnClickedRdPromjenaUnosaRezZaNatjecatelja()
 
 void Dialog_Natjecanja::UcitajNatjecanje_rez()
 {
+	CString s, s1;
 	m_list_podaci.ResetContent();
 
 	if (!RNatjecanja->IsOpen())
@@ -440,8 +489,9 @@ void Dialog_Natjecanja::UcitajNatjecanje_rez()
 
 	if ((RNatjecanja->IsBOF()) && (RNatjecanja->IsEOF()))
 	{
-		MessageBox(_T("U bazi nema niti jedno natjecanje"), _T("Obavijest"),
-			MB_OK);
+		s.LoadString(IDS_STRING_U_BAZI_NEMA_NATJECANJA);
+		s1.LoadString(IDS_STRING_OBAVIJEST);
+		MessageBox(s, s1,MB_OK);			
 		return;
 	}
 	else
@@ -451,9 +501,12 @@ void Dialog_Natjecanja::UcitajNatjecanje_rez()
 			CString naziv = RNatjecanja->m_NazivNatjecanja;
 
 			CTime datum = RNatjecanja->m_DatumNatjecanja;
-			CString strDatum = datum.Format("%d.%m.%Y");
+			
+			CString strDatum = datum.Format(_T("%d.%m.%Y"));
 
-			m_combo_natjecanje_rez.AddString(naziv + _T(",  ") + strDatum);
+			s.LoadString(IDS_STRING_ZAREZ_2);
+			
+			m_combo_natjecanje_rez.AddString(naziv + s + strDatum);
 			RNatjecanja->MoveNext();
 		}
 		RNatjecanja->Close();
@@ -465,15 +518,16 @@ void Dialog_Natjecanja::UcitajNatjecanje_rez()
 void Dialog_Natjecanja::UcitajNatjecatelje_rez()
 {
 	m_list_podaci.ResetContent();
-
+	CString s, s1;
 	CString Ime;
 	if (!RClanovi->IsOpen())
 	RClanovi->Open();
 
 	if ((RClanovi->IsBOF()) && (RClanovi->IsEOF()))
 	{
-		MessageBox(_T("U bazi nema niti jedan èlan"), _T("Obavijest"),
-			MB_OK);
+		s.LoadString(IDS_STRING_U_BAZI_NEMA_CLANOVA);
+		s1.LoadString(IDS_STRING_OBAVIJEST);
+		MessageBox(s, s1, MB_OK);			
 		return;
 	}
 	while (!RClanovi->IsEOF()) {
@@ -495,9 +549,11 @@ void Dialog_Natjecanja::OnCbnSelchangeComboNatjecanjeRez()
 			m_combo_natjecatelj.SetCurSel(-1);
 			m_combo_natjecatelj.EnableWindow(FALSE);
 
+			CString s,s1,s2;
 			CString strID;
+			
 			strID.Format(_T("%ld"), NadiIDnatjecanja());
-
+			
 			RRezultati->m_strFilter= _T("IdNatjecanja = ") + strID + _T("");
 			if (!RRezultati->IsOpen())
 			RRezultati->Open();
@@ -517,7 +573,11 @@ void Dialog_Natjecanja::OnCbnSelchangeComboNatjecanjeRez()
 				CString kategorija = RRezultati->m_Kategorija;
 				CString rezultat = RRezultati->m_Rezultat;
 				
-				m_list_podaci.AddString(strIDrezultata + _T(":  ") + ime + _T("  /  ") + kategorija + _T("  /  ") + rezultat);
+				s.LoadString(IDS_STRING_DVOTOCKA);
+				s1.LoadString(IDS_STRING_KROZ);
+				s2=_T("  ");
+			
+				m_list_podaci.AddString(strIDrezultata + s + s2 + ime +s2 +s1 + s2 + kategorija + s2 + s1 + s2 + rezultat);
 
 				RRezultati->MoveNext();
 			}
@@ -540,8 +600,9 @@ void Dialog_Natjecanja::OnCbnSelchangeComboNatjecatelj()
 			m_combo_natjecanje_rez.EnableWindow(FALSE);
 
 			CString strID;
-			strID.Format(_T("%ld"), NadiIDnatjecatelja());
-
+			CString s,s1,s2;
+			
+			strID.Format(_T("%ld"), NadiIDnatjecatelja());			
 			RRezultati->m_strFilter = _T("IdClana = ") + strID + _T("");
 			if (!RRezultati->IsOpen())
 			RRezultati->Open();
@@ -561,7 +622,9 @@ void Dialog_Natjecanja::OnCbnSelchangeComboNatjecatelj()
 				CString kategorija = RRezultati->m_Kategorija;
 				CString rezultat = RRezultati->m_Rezultat;
 
-				m_list_podaci.AddString(strIDrezultata + _T(":  ") + naziv + _T("  /  ") + kategorija + _T("  /  ") + rezultat);
+				s.LoadString(IDS_STRING_DVOTOCKA);
+				s1.LoadString(IDS_STRING_KROZ_RAZMAK);						
+				m_list_podaci.AddString(strIDrezultata + s  + naziv  + s1  + kategorija  + s1  + rezultat);
 
 				RRezultati->MoveNext();
 			}
@@ -582,8 +645,8 @@ long Dialog_Natjecanja::NadiIDnatjecanja()
 	{
 		m_combo_natjecanje_rez.GetLBText(nSel, naziv);
 	}
-	naziv.Delete(naziv.Find(_T(",")), 16);
-
+	
+	naziv.Delete(naziv.Find(_T(",")), 16);	
 	RNatjecanja->m_strFilter = _T("NazivNatjecanja = '") + naziv + _T("'");
 	if (!RNatjecanja->IsOpen())
 	RNatjecanja->Open();
@@ -597,7 +660,7 @@ long Dialog_Natjecanja::NadiIDnatjecanja()
 
 long Dialog_Natjecanja::NadiIDnatjecatelja()
 {
-	CString ime;
+	CString ime;	
 	long IDclana;
 
 	int nSel = m_combo_natjecatelj.GetCurSel();
@@ -605,6 +668,7 @@ long Dialog_Natjecanja::NadiIDnatjecatelja()
 	{
 		m_combo_natjecatelj.GetLBText(nSel, ime);
 	}
+	
 	RClanovi->m_strFilter = _T("ImePrezime = '") + ime + _T("'");
 	if (!RClanovi->IsOpen())
 	RClanovi->Open();
@@ -618,6 +682,7 @@ long Dialog_Natjecanja::NadiIDnatjecatelja()
 void Dialog_Natjecanja::NadiIme(long IDclana)
 {
 	CString strIDclana;
+	
 	strIDclana.Format(_T("%ld"), IDclana);
 	RClanovi->m_strFilter = (_T("[IDclana] = ") + strIDclana + _T(""));
 	if (!RClanovi->IsOpen())
@@ -633,6 +698,7 @@ void Dialog_Natjecanja::NadiIme(long IDclana)
 void Dialog_Natjecanja::NadiNatjecanje(long IDnatjecanja)
 {
 	CString strIDnatjecanja;
+	
 		strIDnatjecanja.Format(_T("%ld"), IDnatjecanja);
 		RNatjecanja->m_strFilter = (_T("[IDnatjecanja] = ") + strIDnatjecanja + _T(""));
 		if (!RNatjecanja->IsOpen())
@@ -642,7 +708,8 @@ void Dialog_Natjecanja::NadiNatjecanje(long IDnatjecanja)
 		CTime datum = RNatjecanja->m_DatumNatjecanja;
 		RNatjecanja->m_strFilter = _T("");
 		RNatjecanja->Close();
-		CString natjecanje = naziv + _T(",  ") + datum.Format("%d.%m.%Y");
+
+		CString natjecanje = naziv + _T(",  ") + datum.Format(_T("%d.%m.%Y"));
 		
 		m_edit_pom2.SetWindowTextW(natjecanje);
 }
@@ -650,11 +717,13 @@ void Dialog_Natjecanja::NadiNatjecanje(long IDnatjecanja)
 void Dialog_Natjecanja::SpremiRez()
 {
 	CString naziv;
+	CString s, s1;
 	int nSel= m_combo_natjecanje_rez.GetCurSel();
 	if (nSel != LB_ERR)
 	{
 		m_combo_natjecanje_rez.GetLBText(nSel, naziv);
 	}
+	
 	naziv.Delete(naziv.Find(_T(",")), 16);
 
 	RNatjecanja->m_strFilter = _T("[NazivNatjecanja] = '") + naziv + _T("'");
@@ -675,7 +744,7 @@ void Dialog_Natjecanja::SpremiRez()
 	if (!RClanovi->IsOpen())
 	RClanovi->Open();
 	long IDnatjecatelj = RClanovi->m_IDclana;
-	RNatjecanja->m_strFilter = _T("");
+	RClanovi->m_strFilter = _T("");
 	RClanovi->Close();
 
 	long noviID=1;
@@ -697,12 +766,19 @@ void Dialog_Natjecanja::SpremiRez()
 	RRezultati->m_IDnatjecanja = IDnatjecanje;
 	RRezultati->m_Kategorija = kategorija;
 	RRezultati->m_Rezultat = rezultat;
-
+	
 	if (!RRezultati->Update())
-		MessageBox(_T("Unos novog rezultata nije uspio"), _T("Greška"), MB_ICONERROR | MB_OK);			
+	{
+		s.LoadString(IDS_STRING_UNOS_REZULTATA_NIJE_USPIO);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONERROR | MB_OK);
+	}
 	else
-		MessageBox(_T("Novi rezultat je uspješno unesen u bazu"), _T("Obavijest"), MB_OK);
-			
+	{
+		s.LoadString(IDS_STRING_UNOS_REZULTATA_USPIO);
+		s1.LoadString(IDS_STRING_OBAVIJEST);
+		MessageBox(s, s1, MB_OK);
+	}
 	RRezultati->Requery();
 	RRezultati->Close();	
 }
@@ -710,6 +786,7 @@ void Dialog_Natjecanja::SpremiRez()
 
 void Dialog_Natjecanja::PromijeniRez()
 {
+	CString s, s1;
 	if (!RRezultati->IsOpen())
 	RRezultati->Open();
 	RRezultati->Edit();
@@ -730,10 +807,16 @@ void Dialog_Natjecanja::PromijeniRez()
 	RRezultati->m_Rezultat = rezultat;
 
 	if (!RRezultati->Update()) {
-		MessageBox(_T("Promjene nisu uspješno unesene"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
+		s.LoadString(IDS_STRING_PROMJENE_NISU_UNESENE);
+		s1.LoadString(IDS_STRING_GRESKA);
+
+		MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 	}
 	else {
-		MessageBox(_T("Promjene su uspješno unesene"), _T("Obavijest"), MB_OK);
+		s.LoadString(IDS_STRING_PROMJENE_UNESENE);
+		s1.LoadString(IDS_STRING_OBAVIJEST);
+
+		MessageBox(s, s1, MB_OK);
 	}
 	RRezultati->m_strFilter = _T("");
 	RRezultati->Requery();
@@ -742,15 +825,17 @@ void Dialog_Natjecanja::PromijeniRez()
 
 void Dialog_Natjecanja::OnLbnSelchangeListPodaci()
 {
+	CString s;
 	CString podaci;
 	int nSel = m_list_podaci.GetCurSel();
 	if (nSel != LB_ERR)
 	{
 		m_list_podaci.GetText(nSel, podaci);
 	}
+	
 	CString strIndex = podaci.Left(podaci.Find(_T(":")));
 	strIndex.Trim();
-
+	
 	RRezultati->m_strFilter = _T("IDrezultata = ") + strIndex + _T("");
 	if (!RRezultati->IsOpen())
 		RRezultati->Open();
@@ -822,20 +907,3 @@ void Dialog_Natjecanja::OnBnClickedBtnClanarine3()
 	OnCancel();
 	DClanarine->DoModal();
 }
-
-
-
-
-
-
-
-
-//void Dialog_Natjecanja::OnEnChangeEditPom()
-//{
-//	// TODO:  If this is a RICHEDIT control, the control will not
-//	// send this notification unless you override the CDialog::OnInitDialog()
-//	// function and call CRichEditCtrl().SetEventMask()
-//	// with the ENM_CHANGE flag ORed into the mask.
-//
-//	// TODO:  Add your control notification handler code here
-//}

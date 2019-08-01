@@ -58,9 +58,6 @@ void NatjecanjaSet::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-
-
-
 long NatjecanjaSet::MaxID()
 {
 	MoveLast();

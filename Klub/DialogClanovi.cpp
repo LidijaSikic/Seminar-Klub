@@ -74,9 +74,8 @@ BOOL DialogClanovi::OnInitDialog()
 	m_edit_ime_clana.SetFocus();
 	m_combo_spol.SetCurSel(0);
 	m_combo_akt.SetCurSel(0);
-
 	m_date_rod.SetFormat(_T("dd.MM.yyyy"));
-
+	
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -84,7 +83,10 @@ BOOL DialogClanovi::OnInitDialog()
 
 void DialogClanovi::OnBnClickedRdNoviClan()
 {
-	m_static_ime.SetWindowTextW(_T("Ime i prezime"));
+	CString s;
+	m_static_ime.SetWindowTextW(s);
+	s.LoadString(IDS_STRING_PREZIME_IME);
+	
 	m_combo_clanovi_imena.ShowWindow(FALSE);
 	m_edit_ime_clana.ShowWindow(TRUE);
 	ocisti();
@@ -94,7 +96,7 @@ void DialogClanovi::OnBnClickedRdNoviClan()
 void DialogClanovi::OnBnClickedRdPromjenaClanovi()
 {
 	m_combo_clanovi_imena.ShowWindow(TRUE);	
-	//ocisti();	
+		
 	m_combo_clanovi_imena.ResetContent();
 	ucitaj_imena();	
 }
@@ -102,12 +104,16 @@ void DialogClanovi::OnBnClickedRdPromjenaClanovi()
 
 void DialogClanovi::OnBnClickedBtnSpremi()
 {
+	CString s, s1;
+
 	if (provjeri_podatke() == false)
 	{
 		return;
 	}
 	else if (m_rb_upis_novog_clana.GetCheck() == 1)
 	{
+		
+
 		long noviID=1;
 
 		if (!RClanovi->IsOpen())
@@ -149,17 +155,22 @@ void DialogClanovi::OnBnClickedBtnSpremi()
 		RClanovi->m_Aktivnost = aktivnost;
 
 		if (!RClanovi->Update())
-			MessageBox(_T("Unos novog èlana nije uspio"), _T("Greška"),
-				MB_ICONERROR | MB_OK);
+		{
+			s.LoadString(IDS_STRING_UNOS_CLANA_NEUSPIO);
+			s1.LoadString(IDS_STRING_GRESKA);
+			MessageBox(s, s1, MB_ICONERROR | MB_OK);					
+		}
 		else
-			MessageBox(_T("Novi èlan je uspješno unesen u bazu"), _T("Obavijest"),
-				MB_OK);
+		{
+			s.LoadString(IDS_STRING_UNOS_CLANA_USPIO);
+			s1.LoadString(IDS_STRING_OBAVIJEST);
+			MessageBox(s, s1, MB_OK);							
+		}
 	}
 	else if (m_rb_promjena_podataka_clanovi.GetCheck() == 1)
 	{
 		CString strIDclana;
 		m_edit_ID_clana.GetWindowTextW(strIDclana);
-
 
 		if (!RClanovi->IsOpen())
 			RClanovi->Open();
@@ -195,18 +206,26 @@ void DialogClanovi::OnBnClickedBtnSpremi()
 		RClanovi->m_Adresa = adresa;
 		RClanovi->m_Mail = mail;
 
-		if (!RClanovi->Update()) {
-			MessageBox(_T("Promjene nisu uspješno unesene"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
+		if (!RClanovi->Update()) 
+		{
+			s.LoadString(IDS_STRING_PROMJENE_NISU_UNESENE);
+			s1.LoadString(IDS_STRING_GRESKA);
+			MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 		}
-		else {
-			MessageBox(_T("Promjene su uspješno unesene"), _T("Obavijest"), MB_OK);
+		else 
+		{
+			s.LoadString(IDS_STRING_PROMJENE_UNESENE);
+			s1.LoadString(IDS_STRING_OBAVIJEST);
+			MessageBox(s, s1, MB_OK);
 		}	
 	}
 	RClanovi->Requery();
 	RClanovi->m_strFilter = _T("");
 	RClanovi->Close();
 
-	m_static_ime.SetWindowTextW(_T("Ime i prezime"));
+	m_static_ime.SetWindowTextW(s);
+	s.LoadString(IDS_STRING_PREZIME_IME);
+
 	m_combo_clanovi_imena.ResetContent();
 	m_combo_clanovi_imena.ShowWindow(FALSE);
 	ocisti();
@@ -215,13 +234,13 @@ void DialogClanovi::OnBnClickedBtnSpremi()
 
 void DialogClanovi::OnBnClickedBtnOdustani()
 {
+	//CString s;
 	ocisti();
 
 	if (!RClanovi->IsOpen())
 		RClanovi->Open();
 	RClanovi->m_strFilter = _T("");
-	RClanovi->Close();
-	m_static_ime.SetWindowTextW(_T("Ime i prezime"));
+	RClanovi->Close();	
 }
 
 
@@ -244,132 +263,28 @@ void DialogClanovi::ocisti()
 	m_combo_clanovi_imena.ShowWindow(FALSE);
 	m_rb_upis_novog_clana.SetCheck(1);
 	m_rb_promjena_podataka_clanovi.SetCheck(0);
+	CString s;
+	s.LoadString(IDS_STRING_PREZIME_IME);
+	m_static_ime.SetWindowTextW(s);
 }
-
-
-//void DialogClanovi::promijeni()
-//{	
-//	CString strIDclana;
-//	m_edit_ID_clana.GetWindowTextW(strIDclana);
-//
-//	if (!RClanovi->IsOpen())
-//		RClanovi->Open();
-//	
-//	RClanovi->Edit();
-//
-//	CString ime;
-//	m_edit_ime_clana.GetWindowText(ime);
-//
-//	CTime datRod;
-//	m_date_rod.GetTime(datRod);
-//
-//	CString spol;
-//	m_combo_spol.GetWindowText(spol);
-//
-//	CString aktivnost;
-//	m_combo_akt.GetWindowText(aktivnost);
-//
-//	CString tel;
-//	m_edit_tel.GetWindowTextW(tel);
-//
-//	CString adresa;
-//	m_edit_adresa.GetWindowTextW(adresa);
-//
-//	CString mail;
-//	m_edit_mail.GetWindowTextW(mail);
-//
-//	RClanovi->m_ImePrezime = ime;
-//	RClanovi->m_DatumRodenja = datRod;
-//	RClanovi->m_Spol = spol;
-//	RClanovi->m_Aktivnost = aktivnost;
-//	RClanovi->m_Tel = tel;
-//	RClanovi->m_Adresa = adresa;
-//	RClanovi->m_Mail = mail;
-//
-//	if (!RClanovi->Update()) 
-//	{
-//		MessageBox(_T("Promjene nisu uspješno unesene"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
-//	}
-//	else 
-//	{
-//		MessageBox(_T("Promjene su uspješno unesene"), _T("Obavijest"), MB_OK);
-//	}
-//	UpdateData(FALSE);
-//	RClanovi->Requery();	
-//	RClanovi->m_strFilter = _T("");
-//	RClanovi->Close();
-//
-//	m_static_ime.SetWindowTextW(_T("Ime i prezime"));
-//	m_combo_clanovi_imena.ResetContent();
-//	m_combo_clanovi_imena.ShowWindow(FALSE);
-//}
-
-
-//void DialogClanovi::spremi()
-//{
-//	long noviID = 1;
-//
-//	if (!RClanovi->IsOpen())
-//	RClanovi->Open();
-//	
-//	if (!RClanovi->IsBOF() && !RClanovi->IsEOF())
-//		noviID = RClanovi->MaxID() + 1;
-//
-//	RClanovi->AddNew();
-//
-//	CString ime;
-//	m_edit_ime_clana.GetWindowText(ime);
-//
-//	CTime datRod;
-//	m_date_rod.GetTime(datRod);
-//
-//	CString spol;
-//	m_combo_spol.GetWindowText(spol);
-//
-//	CString aktivnost;
-//	m_combo_akt.GetWindowText(aktivnost);
-//
-//	CString tel;
-//	m_edit_tel.GetWindowTextW(tel);
-//
-//	CString adresa;
-//	m_edit_adresa.GetWindowTextW(adresa);
-//
-//	CString mail;
-//	m_edit_mail.GetWindowTextW(mail);
-//
-//	RClanovi->m_IDclana = noviID;
-//	RClanovi->m_ImePrezime = ime;
-//	RClanovi->m_Spol = spol;
-//	RClanovi->m_DatumRodenja = datRod;
-//	RClanovi->m_Tel = tel;
-//	RClanovi->m_Adresa = adresa;
-//	RClanovi->m_Mail = mail;
-//	RClanovi->m_Aktivnost = aktivnost;
-//
-//	if (!RClanovi->Update())
-//		MessageBox(_T("Unos novog èlana nije uspio"), _T("Greška"),
-//			MB_ICONERROR | MB_OK);
-//	else
-//		MessageBox(_T("Novi èlan je uspješno unesen u bazu"), _T("Obavijest"),
-//			MB_OK);
-//	RClanovi->Requery();
-//	RClanovi->Close();
-//
-//	ocisti();
-//}
 
 
 void DialogClanovi::ucitaj_imena()
 {
-	m_static_ime.SetWindowTextW(_T("Izaberi ime za promjenu"));
+	CString s,s1;
 
+	s.LoadString(IDS_STRING_IZABERI_IME);
+	m_static_ime.SetWindowTextW(s);
+	
 			if (!RClanovi->IsOpen())
 				RClanovi->Open();		
 
 			if (RClanovi->IsBOF() && RClanovi->IsEOF())
 			{
-				MessageBox(_T("U bazi nema podataka"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
+				s.LoadString(IDS_STRING_BAZA_BEZ_PODATAKA);
+				s1.LoadString(IDS_STRING_GRESKA);
+
+				MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 				return;
 			}
 			else
@@ -385,6 +300,7 @@ void DialogClanovi::ucitaj_imena()
 
 void DialogClanovi::OnCbnSelchangeComboClanoviImena()
 {
+	
 	CString ime;
 	
 	int nSel = m_combo_clanovi_imena.GetCurSel();
@@ -395,11 +311,13 @@ void DialogClanovi::OnCbnSelchangeComboClanoviImena()
 	m_edit_ime_clana.SetWindowTextW(ime);
 
 	RClanovi->m_strFilter = _T("[ImePrezime] = '") + ime + _T("'");
+	
 	if(!RClanovi->IsOpen())
 	RClanovi->Open();
 
 	long IDclana = RClanovi->m_IDclana;
 	CString strIDclana;
+	
 	strIDclana.Format(_T("%ld"), IDclana);
 	m_edit_ID_clana.SetWindowTextW(strIDclana);
 
@@ -445,6 +363,7 @@ void DialogClanovi::OnBnClickedBtnPrikaziClanove()
 
 bool DialogClanovi::provjeri_podatke()
 {
+	CString s, s1;
 	int nSel;
 
 	CString text;
@@ -463,38 +382,30 @@ bool DialogClanovi::provjeri_podatke()
 		m_combo_akt.GetLBText(nSel, aktivnost);
 	}
 	CTime dat= dat.GetCurrentTime();
-	CTime datRod = m_date_rod.GetTime(datRod);
+	CTime datRod;
+	m_date_rod.GetTime(datRod);
 
 	if (text.IsEmpty())
 	{
-		MessageBox(_T("Nije uneseno ime èlana"), _T("Greška"),
-			MB_ICONERROR | MB_OK);
+		s.LoadString(IDS_STRING_NIJE_UNESENO_IME);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONERROR | MB_OK);
+			
 		m_edit_ime_clana.SetFocus();
 		return false;
 	}
-	else if ((spol != _T("m")) && (spol != _T("ž")))
-	{
-		MessageBox(_T("Krivi unos! Za spol unesite: m ili ž"), _T("Greška"), MB_ICONERROR | MB_OK);					
-			m_combo_spol.SetFocus();
-			return false;
-	}
-	else if ((aktivnost != _T("aktivan")) && (aktivnost != _T("neaktivan")) && (aktivnost != _T("ispisan")))
-	{
-		MessageBox(_T("Krivi unos! Za aktivnost unesite: aktivan, neaktivan ili ispisan"), _T("Greška"),
-			MB_ICONERROR | MB_OK);
-		m_combo_akt.SetFocus();
-		return false;
-	}
+	
 	else if (datRod > dat)
 	{
-		MessageBox(_T("Krivi unos! Datum roðenja je veæi od današnjeg"), _T("Greška"), MB_ICONERROR | MB_OK);
+		s.LoadString(IDS_STRING_KRIVI_UNOS_DATUM);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONERROR | MB_OK);
 		m_date_rod.SetFocus();
 		return false;
 	}
 	else
 		return true;
 }
-
 
 
 void DialogClanovi::OnBnClickedBtnPocetna1()

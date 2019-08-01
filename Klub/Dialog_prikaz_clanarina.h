@@ -34,6 +34,8 @@ protected:
 	CFont* m_pFntHeader2;
 	CPen m_penBlack;
 	void PrintHeader(CDC* pDC, CPrintInfo *pInfo);
+	int VisinaHeadera(CDC* pDC);
+	int VisinaReda(CDC* pDC);
 
 	DECLARE_MESSAGE_MAP()
 public:

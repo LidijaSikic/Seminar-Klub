@@ -75,19 +75,30 @@ BOOL Dialog_prikaz_clanova::OnInitDialog()
 
 void Dialog_prikaz_clanova::popuni_naslove()
 {
-	m_Lista_Clanovi.InsertColumn(0, _T("Ime"), LVCFMT_LEFT, 150); 
-	m_Lista_Clanovi.InsertColumn(1, _T("Datum roðenja"), LVCFMT_CENTER, 120);
-	m_Lista_Clanovi.InsertColumn(2, _T("Telefon"), LVCFMT_CENTER, 100);
-	m_Lista_Clanovi.InsertColumn(3, _T("Adresa"), LVCFMT_LEFT, 180);
-	m_Lista_Clanovi.InsertColumn(4, _T("Mail"), LVCFMT_LEFT, 150);
-	m_Lista_Clanovi.InsertColumn(5, _T("Aktivnost"), LVCFMT_LEFT, 80);
+	CString s;
+	s.LoadString(IDS_STRING_IME);
+	m_Lista_Clanovi.InsertColumn(0, s, LVCFMT_LEFT, 150);
+	s.LoadString(IDS_STRING_SPOL);
+	m_Lista_Clanovi.InsertColumn(1, s, LVCFMT_LEFT, 50);
+	s.LoadString(IDS_STRING_DATUM_RODENJA);
+	m_Lista_Clanovi.InsertColumn(2, s, LVCFMT_CENTER, 120);
+	s.LoadString(IDS_STRING_TELEFON);
+	m_Lista_Clanovi.InsertColumn(3, s, LVCFMT_CENTER, 120);
+	s.LoadString(IDS_STRING_ADRESA);
+	m_Lista_Clanovi.InsertColumn(4, s, LVCFMT_LEFT, 180);
+	s.LoadString(IDS_STRING_MAIL);
+	m_Lista_Clanovi.InsertColumn(5, s, LVCFMT_LEFT, 150);
+	s.LoadString(IDS_STRING_AKTIVNOST);
+	m_Lista_Clanovi.InsertColumn(6, s, LVCFMT_LEFT, 80);
 }
 
 void Dialog_prikaz_clanova::popuni_listu()
 {
+	CString s, s1;
 	int nIndex;
 	if (m_rd_aktivni.GetCheck() == 1)
-	{		
+	{	
+
 		RClanovi->m_strFilter = _T("Aktivnost = 'aktivan'");
 	}
 	else if (m_rd_neaktivni.GetCheck() == 1)
@@ -102,7 +113,9 @@ void Dialog_prikaz_clanova::popuni_listu()
 
 	if (RClanovi->IsBOF() && RClanovi->IsEOF())
 	{
-		MessageBox(_T("U bazi nema podataka"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
+		s.LoadString(IDS_STRING_BAZA_BEZ_PODATAKA);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 		return;
 	}
 	else
@@ -114,14 +127,15 @@ void Dialog_prikaz_clanova::popuni_listu()
 			CTime dat = RClanovi->m_DatumRodenja;
 			CString strDat = dat.Format(_T("%d.%m.%Y"));
 
-			m_Lista_Clanovi.SetItemText(nIndex, 1, strDat);
-			m_Lista_Clanovi.SetItemText(nIndex, 2, RClanovi->m_Tel);
-			m_Lista_Clanovi.SetItemText(nIndex, 3, RClanovi->m_Adresa);
-			m_Lista_Clanovi.SetItemText(nIndex, 4, RClanovi->m_Mail);
-			m_Lista_Clanovi.SetItemText(nIndex, 5, RClanovi->m_Aktivnost);
+			m_Lista_Clanovi.SetItemText(nIndex, 1, RClanovi->m_Spol);
+			m_Lista_Clanovi.SetItemText(nIndex, 2, strDat);
+			m_Lista_Clanovi.SetItemText(nIndex, 3, RClanovi->m_Tel);
+			m_Lista_Clanovi.SetItemText(nIndex, 4, RClanovi->m_Adresa);
+			m_Lista_Clanovi.SetItemText(nIndex, 5, RClanovi->m_Mail);
+			m_Lista_Clanovi.SetItemText(nIndex, 6, RClanovi->m_Aktivnost);
 			RClanovi->MoveNext();
 		}		
-		RClanovi->m_strFilter = "";
+		RClanovi->m_strFilter = _T("");
 		RClanovi->Close();
 	}
 }
@@ -135,10 +149,13 @@ void Dialog_prikaz_clanova::OnBnClickedBtnPrikazi()
 
 void Dialog_prikaz_clanova::OnBnClickedBtnIspisiPrikaz()
 {
+	CString s, s1;
 	int z = m_Lista_Clanovi.GetItemCount();
 	if (z == 0)
 	{
-		MessageBox(_T("Nema podataka za ispis"), _T("Greška"), MB_ICONEXCLAMATION | MB_OK);
+		s.LoadString(IDS_STRING_NEMA_PODATAKA_ZA_ISPIS);
+		s1.LoadString(IDS_STRING_GRESKA);
+		MessageBox(s, s1, MB_ICONEXCLAMATION | MB_OK);
 		return;
 	}
 	else
@@ -191,13 +208,12 @@ void Dialog_prikaz_clanova::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 {
 	ASSERT(m_pFntData == 0);
 	ASSERT(m_pFntHeader1 == 0);
-	ASSERT(m_pFntHeader2 == 0);
-	
-	pDC->SetMapMode(MM_TWIPS);
+	ASSERT(m_pFntHeader2 == 0);	
 	
 	m_pFntData = new CFont;
 	ASSERT(m_pFntData);
-	m_pFntData->CreateFont(280,
+	int fntDataSize = 12;
+	m_pFntData->CreateFont(-fntDataSize * pDC->GetDeviceCaps(LOGPIXELSY) / 72,
 		0,
 		0,
 		0,
@@ -214,7 +230,8 @@ void Dialog_prikaz_clanova::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 	
 	m_pFntHeader1 = new CFont;
 	ASSERT(m_pFntHeader1);
-	m_pFntHeader1->CreateFont(850,
+	int fntHeader1Size = 25;
+	m_pFntHeader1->CreateFont(-fntHeader1Size * pDC->GetDeviceCaps(LOGPIXELSY) / 72,
 		0,
 		0,
 		0,
@@ -231,7 +248,8 @@ void Dialog_prikaz_clanova::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 	
 	m_pFntHeader2 = new CFont;
 	ASSERT(m_pFntHeader2);
-	m_pFntHeader2->CreateFont(280,
+	int fntHeader2Size = 12;
+	m_pFntHeader2->CreateFont(-fntHeader2Size * pDC->GetDeviceCaps(LOGPIXELSY) / 72,
 		0,
 		0,
 		0,
@@ -246,12 +264,15 @@ void Dialog_prikaz_clanova::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 		DEFAULT_PITCH | FF_ROMAN,
 		_T("Arial"));
 
-	INT brIt = m_Lista_Clanovi.GetItemCount();
-	FLOAT brStr;
-	if (brIt % 16 == 0)
-		brStr = brIt / 16;
+	int visina = pInfo->m_rectDraw.Height() - VisinaHeadera(pDC);
+	int brIt = m_Lista_Clanovi.GetItemCount();
+	int visinaReda = VisinaReda(pDC);
+	
+	int brStr;
+	if (brIt % (visina/visinaReda) == 0)
+		brStr = brIt / (visina / visinaReda);
 	else
-		brStr = brIt / 16 + 1;
+		brStr = brIt / (visina / visinaReda) + 1;
 	
 	pInfo->SetMaxPage(brStr);
 }
@@ -259,33 +280,47 @@ void Dialog_prikaz_clanova::OnBeginPrinting(CDC *pDC, CPrintInfo* pInfo)
 void Dialog_prikaz_clanova::OnPrint(CDC *pDC, CPrintInfo* pInfo)
 {	
 	CString s;
+	CPoint pt(0, 0);
 	int sirina_p = pDC->GetDeviceCaps(HORZRES);
 	int visina_p = pDC->GetDeviceCaps(VERTRES);
-	CSize font = pDC->GetTextExtent(_T("A"));
-	int x1 = sirina_p / 6;
-	int y1 = -(font.cy * 8);
-
-	CString text;
-
+	
 	TEXTMETRIC tm;
 	PrintHeader(pDC, pInfo);
 	
+	int visinaHeadera = VisinaHeadera(pDC);
+
 	CFont* pOldFont = pDC->SelectObject(m_pFntData);
+
 	pDC->GetTextMetrics(&tm);
+
+	CRect visinaStranice = pInfo->m_rectDraw;
+
+	int stranica = pInfo->m_nCurPage;
+	int razmak=  tm.tmHeight + tm.tmExternalLeading;
 	
-	int flag = pInfo->m_nCurPage;
+	int visinaReda = VisinaReda(pDC);
+	int visina = visinaStranice.Height()-visinaHeadera;
+
+	int brRedova = visina / visinaReda; 
+
 	CString rb;
-		for (int red = 16*(flag-1); red < m_Lista_Clanovi.GetItemCount() && red<=15*flag; red++)
+
+	pt.y = visinaHeadera + razmak;
+	pt.x = 2 * tm.tmHeight;
+
+	for (int red = brRedova * (stranica - 1); red < m_Lista_Clanovi.GetItemCount() && red <= (brRedova - 1) * stranica; red++)
 		{
 			rb.Format(_T("%ld"), red+1);
-			pDC->TextOut(x1, y1 -= 550, rb +_T("."));
-			pDC->TextOut(x1*1.5, y1, m_Lista_Clanovi.GetItemText(red, 0));
-			pDC->TextOut(x1*4.7, y1, m_Lista_Clanovi.GetItemText(red, 1));
-			pDC->TextOut(x1*7.4, y1, m_Lista_Clanovi.GetItemText(red, 5));
-			pDC->TextOut(x1 * 10.0, y1, m_Lista_Clanovi.GetItemText(red, 2));
-			pDC->TextOut(x1 * 2.5, y1 -= 310, m_Lista_Clanovi.GetItemText(red, 3));
-			pDC->TextOut(x1 * 8.0, y1, m_Lista_Clanovi.GetItemText(red, 4));			
-		}	
+			s.LoadString(IDS_STRING_TOCKA);
+			pDC->TextOut(pt.x, pt.y += 2.2*razmak, rb + s);
+			pDC->TextOut(pt.x * 2, pt.y, m_Lista_Clanovi.GetItemText(red, 0));
+			pDC->TextOut(pt.x * 7, pt.y, m_Lista_Clanovi.GetItemText(red, 1));
+			pDC->TextOut(pt.x * 9, pt.y, m_Lista_Clanovi.GetItemText(red, 2));
+			pDC->TextOut(pt.x * 13, pt.y, m_Lista_Clanovi.GetItemText(red, 3));
+			pDC->TextOut(pt.x * 18, pt.y, m_Lista_Clanovi.GetItemText(red, 6));
+			pDC->TextOut(pt.x * 4, pt.y += 1.1*razmak, m_Lista_Clanovi.GetItemText(red, 4));
+			pDC->TextOut(pt.x * 11, pt.y, m_Lista_Clanovi.GetItemText(red, 5));			
+		}
 }
 
 void Dialog_prikaz_clanova::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
@@ -360,6 +395,7 @@ void Dialog_prikaz_clanova::Print()
 
 void Dialog_prikaz_clanova::PrintHeader(CDC* pDC, CPrintInfo *pInfo)
 {
+	CString s, s1;
 	ASSERT(pDC);
 	TEXTMETRIC tm;
 	CPoint pt(0, 0);
@@ -369,27 +405,39 @@ void Dialog_prikaz_clanova::PrintHeader(CDC* pDC, CPrintInfo *pInfo)
 	ASSERT(pOldFont);
 	pDC->GetTextMetrics(&tm);
 	int cyText =  tm.tmHeight*0.5 + tm.tmExternalLeading;
-	pt.y -= cyText;
-	pDC->TextOut(pt.x+1070, pt.y, _T("KARATE  KLUB  \"RONIN\""));
+	pt.y += cyText;
+	pt.x = tm.tmHeight;
+	s.LoadString(IDS_STRING_KARATE_KLUB);
+	pDC->TextOut(pt.x*6, pt.y, s);
 	
 	CPen* pOldPen = pDC->SelectObject(&m_penBlack);
 	ASSERT(pOldPen);
-	pt.y -= cyText*2;
+	pt.x = 0;
+	pt.y += cyText*2;
 	pDC->MoveTo(pt);
-	pDC->LineTo(12000, pt.y);
+	pDC->LineTo(pDC->GetDeviceCaps(HORZRES), pt.y);
 	
 	VERIFY(pDC->SelectObject(m_pFntHeader2));
 	
-	pt.y -= (cyText / 4);
+	pt.x = tm.tmHeight;
+	pt.y += (cyText / 3);
 
 	CString clanovi;
 	if (m_rd_aktivni.GetState() == 1)
-		clanovi = _T("Aktivni èlanovi kluba ");
-	else if(m_rd_neaktivni.GetState() == 1)
-		clanovi = _T("Neaktivni èlanovi kluba ");
+	{
+		s.LoadString(IDS_STRING_AKTIVNI_CLANOVI);
+		clanovi = s;
+	}
+	else if (m_rd_neaktivni.GetState() == 1)
+	{
+		s.LoadString(IDS_STRING_NEAKTIVNI_CLANOVI);
+		clanovi = s;
+	}
 	else if (m_rd_svi.GetState() == 1)
-		clanovi = _T("Popis èlanova kluba ");
-
+	{
+		s.LoadString(IDS_STRING_POPIS_CLANOVA);
+		clanovi = s;
+	}
 	CTime dat = CTime::GetCurrentTime();
 	CString datum = dat.Format(_T("%d.%m.%Y"));
 
@@ -399,9 +447,45 @@ void Dialog_prikaz_clanova::PrintHeader(CDC* pDC, CPrintInfo *pInfo)
 	str.Format(_T("%u"), st);
 	ukStr.Format(_T("%u"), uk);
 
-	pDC->TextOut(pt.x + 1600, pt.y, clanovi + _T("na dan:   ") + datum); 
-	pDC->TextOut(pt.x *5.5, pt.y, _T(" str.  ") + str + _T("/") + ukStr);
+	s.LoadString(IDS_STRING_NA_DAN);
+	pDC->TextOut(pt.x *3, pt.y, clanovi + s  + datum); 
+	s.LoadString(IDS_STRING_STR);
+	s1.LoadString(IDS_STRING_KROZ);
+	pDC->TextOut(pt.x *15, pt.y, s + str + s1 + ukStr);
 	// Restore GDI objects.
 	pDC->SelectObject(pOldFont);
-	pDC->SelectObject(pOldPen);
+	pDC->SelectObject(pOldPen);	
+}
+
+int Dialog_prikaz_clanova::VisinaHeadera(CDC* pDC)
+{
+	int y=0;
+	ASSERT(pDC);
+	TEXTMETRIC tm;	
+
+	CFont* pFont = pDC->SelectObject(m_pFntHeader1);
+
+	ASSERT(pFont);
+	pDC->GetTextMetrics(&tm);
+	int cyText = tm.tmHeight*0.5 + tm.tmExternalLeading;
+		
+	y = cyText * 3;
+	
+	VERIFY(pDC->SelectObject(m_pFntHeader2));
+	
+	y += (cyText / 3);
+
+	return y;
+}
+
+int Dialog_prikaz_clanova::VisinaReda(CDC* pDC)
+{
+	CFont* pFont = pDC->SelectObject(m_pFntData);
+	TEXTMETRIC tm;
+	pDC->GetTextMetrics(&tm);
+
+	int razmak = tm.tmHeight + tm.tmExternalLeading;
+	int visinaReda = 1.5*razmak + 2 * tm.tmHeight;
+	return visinaReda;
+
 }

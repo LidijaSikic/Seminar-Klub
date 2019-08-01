@@ -54,8 +54,6 @@ public:
 	afx_msg void OnCbnSelchangeComboClanoviImena();
 	afx_msg void OnBnClickedBtnPrikaziClanove();
 	void ocisti();
-	/*void promijeni();
-	void spremi();*/
 	void ucitaj_imena();	
 	bool provjeri_podatke();	
 	afx_msg void OnBnClickedBtnPocetna1();
